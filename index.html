@@ -1,0 +1,2525 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+
+<!--
+  ============================================================
+  spagetak.com — osobní web Víta Machače (přezdívka: Spagy)
+  ============================================================
+
+  AI-ASSISTED PORTIONS  /  ČÁSTI VYTVOŘENÉ S POMOCÍ AI
+  -----------------------------------------------------
+  Tento dokument byl rozvržen s pomocí AI kódovacího asistenta.
+  Následující části byly AI-asistované a poté ručně upraveny:
+
+    • Počáteční HTML struktura a řazení sekcí
+    • Systém CSS proměnných (barvy, typografie, spacing)
+    • Smyčka částic pro hvězdné pole v <canvas>
+    • Boilerplate meta / Open Graph / Twitter Card tagy
+    • Mobilní nav přepínač a smooth-scroll handlery
+
+  Obsah (bio, popisky projektů, tón komunikace) a celkový
+  vizuální směr napsal a navrhl majitel stránky.
+  ============================================================
+-->
+
+<!-- ============================================================
+     SEO + Social
+     ============================================================ -->
+<title>Vít Machač · Spagy · Vývojář</title>
+<meta name="description" content="Vít Machač (Spagy), sedmnáctiletý vývojář z Česka. Stavím malé, spolehlivé nástroje. Kontakt: vit.machac@spagetak.com." />
+<meta name="keywords" content="Vít Machač, Vit Machac, Spagy, spagetak, vývojář, developer, frontend, vanilla javascript, portfolio, Česko" />
+<meta name="author" content="Vít Machač" />
+<meta name="color-scheme" content="dark" />
+<meta name="theme-color" content="#080a10" />
+
+<!-- Open Graph -->
+<meta property="og:type" content="website" />
+<meta property="og:site_name" content="spagetak.com" />
+<meta property="og:title" content="Vít Machač · Spagy" />
+<meta property="og:description" content="Vývojář, 17. Pracuje v noci. Vydává malé věci, které fungují." />
+<meta property="og:locale" content="cs_CZ" />
+<meta property="og:url" content="https://spagetak.com/" />
+<meta property="og:image" content="https://spagetak.com/spagy.webp" />
+
+<!-- Twitter -->
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content="Vít Machač · Spagy" />
+<meta name="twitter:description" content="Vývojář, 17. Pracuje v noci. Vydává malé věci, které fungují." />
+<meta name="twitter:image" content="https://spagetak.com/spagy.webp" />
+
+<link rel="canonical" href="https://spagetak.com/" />
+<link rel="icon" type="image/webp" href="favicon.webp" />
+<link rel="apple-touch-icon" href="favicon.webp" />
+
+<!-- One Google Fonts request — Instrument Serif (display name),
+     Newsreader (editorial titles), Archivo (humanist body + labels).
+     Avoiding obvious AI defaults. -->
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@300;400;500;600;700&family=Bebas+Neue&family=Instrument+Serif:ital@0;1&family=Newsreader:ital,opsz,wght@0,6..72,300;0,6..72,400;1,6..72,300;1,6..72,400&display=swap" rel="stylesheet" />
+
+<style>
+/* =========================================================
+   Design tokens
+   ========================================================= */
+:root{
+  /* Palette — deep space, slightly lifted from pure black */
+  --void:        #080a10;   /* base */
+  --void-2:      #0c0f17;
+  --panel:       #11151e;   /* lifted a hair from before so cards read */
+  --panel-2:     #161a24;
+  --line:        #232733;
+  --line-2:      #2d313e;
+  --ash:         #444956;
+  --bone:        #d4d1c6;
+  --bone-dim:    #908d83;
+  --bone-mute:   #5f5c54;
+
+  /* RED — jedna brand červená, žádné varianty */
+  --red:         #ad0808;
+  --red-mid:     #ad0808;
+  --red-bright:  #ad0808;
+  --red-deep:    #ad0808;
+  --navy-glow:   #0d1224;
+
+  /* Type */
+  --f-display: "Instrument Serif", "Times New Roman", serif;
+  --f-serif: "Newsreader", "Times New Roman", serif;
+  --f-sans:  "Archivo", system-ui, -apple-system, "Helvetica Neue", Arial, sans-serif;
+  /* Small / label face — reuses Archivo so the whole site reads in one body family.
+     Labels distinguish themselves via size, letter-spacing and uppercase. */
+  --f-mono:  "Archivo", system-ui, -apple-system, "Helvetica Neue", Arial, sans-serif;
+
+  /* Spacing */
+  --s-1: 4px; --s-2: 8px; --s-3: 12px; --s-4: 16px;
+  --s-5: 24px; --s-6: 32px; --s-7: 48px; --s-8: 64px;
+  --s-9: 96px; --s-10: 128px;
+
+  /* Layout */
+  --w-max: 1240px;
+  --gutter: clamp(20px, 4vw, 56px);
+
+  /* Motion */
+  --ease: cubic-bezier(.2,.6,.2,1);
+}
+
+/* =========================================================
+   Reset
+   ========================================================= */
+*,*::before,*::after{box-sizing:border-box}
+html,body{margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{
+  background:var(--void);
+  color:var(--bone);
+  font-family:var(--f-sans);
+  font-weight:400;
+  font-size:16px;
+  line-height:1.55;
+  -webkit-font-smoothing:antialiased;
+  text-rendering:optimizeLegibility;
+  overflow-x:hidden;
+  min-height:100vh;
+}
+img{max-width:100%;display:block}
+a{color:inherit;text-decoration:none}
+button{font:inherit;color:inherit;background:none;border:0;cursor:pointer;padding:0}
+::selection{background:var(--red-deep);color:var(--bone)}
+:focus-visible{outline:1px solid var(--red-bright); outline-offset:3px}
+
+/* =========================================================
+   Sky / space background
+   - Layer 1 (.sky): faint nebula gradients + static deep-field stars
+   - Layer 2 (canvas): drifting parallax stars
+   - Layer 3 (.horizon): planetary horizon arc at hero base
+   ========================================================= */
+.sky{
+  position:fixed; inset:0;
+  pointer-events:none;
+  z-index:0;
+  background:
+    /* warm deep crimson nebula, very faint */
+    radial-gradient(ellipse 90% 60% at 78% 14%, rgba(173,8,8,.18) 0%, transparent 55%),
+    /* cool blue nebula, opposite corner */
+    radial-gradient(ellipse 80% 60% at 8% 88%, rgba(20,30,70,.22) 0%, transparent 55%),
+    /* faint dust band */
+    radial-gradient(ellipse 140% 40% at 50% 30%, rgba(40,30,55,.10) 0%, transparent 60%),
+    var(--void);
+}
+.sky::before, .sky::after{
+  content:"";
+  position:absolute; inset:0;
+  background-image:
+    radial-gradient(1px 1px at 12% 18%, #d4d1c7 50%, transparent 51%),
+    radial-gradient(1px 1px at 27% 64%, #aaa79c 50%, transparent 51%),
+    radial-gradient(1px 1px at 41% 9%,  #f1eee3 50%, transparent 51%),
+    radial-gradient(1px 1px at 56% 82%, #7d7a72 50%, transparent 51%),
+    radial-gradient(1px 1px at 68% 33%, #c4c1b7 50%, transparent 51%),
+    radial-gradient(1px 1px at 78% 55%, #989488 50%, transparent 51%),
+    radial-gradient(1px 1px at 88% 12%, #d4d1c7 50%, transparent 51%),
+    radial-gradient(1px 1px at 92% 78%, #6f6c64 50%, transparent 51%),
+    radial-gradient(1px 1px at  3% 44%, #aaa79c 50%, transparent 51%),
+    radial-gradient(1px 1px at 19% 91%, #c4c1b7 50%, transparent 51%),
+    radial-gradient(1px 1px at 35% 36%, #7d7a72 50%, transparent 51%),
+    radial-gradient(1px 1px at 49% 51%, #d4d1c7 50%, transparent 51%),
+    radial-gradient(1px 1px at 61% 71%, #989488 50%, transparent 51%),
+    radial-gradient(2px 2px at 47% 22%, #f1eee3 50%, transparent 51%),
+    radial-gradient(2px 2px at 22% 50%, #d4d1c7 50%, transparent 51%);
+  background-size: 600px 600px;
+  opacity:.6;
+  mix-blend-mode:screen;
+}
+.sky::after{
+  background-size:900px 900px;
+  opacity:.4;
+  transform:translate(120px,80px);
+}
+#stars{position:fixed; inset:0; pointer-events:none; z-index:1}
+
+/* Vignette so center text reads */
+.vignette{
+  position:fixed; inset:0;
+  pointer-events:none;
+  z-index:2;
+  background:radial-gradient(ellipse at 50% 40%, transparent 0%, transparent 38%, rgba(8,10,16,.55) 92%);
+}
+
+/* =========================================================
+   Layout shell
+   ========================================================= */
+.wrap{
+  position:relative;
+  z-index:3;
+  max-width:var(--w-max);
+  margin:0 auto;
+  padding:0 var(--gutter);
+}
+
+/* =========================================================
+   Nav
+   ========================================================= */
+.nav{
+  position:fixed;
+  top:0; left:0; right:0;
+  z-index:50;
+  background:linear-gradient(180deg, rgba(8,10,16,.95) 0%, rgba(8,10,16,.78) 70%, rgba(8,10,16,0) 100%);
+  border-bottom:1px solid transparent;
+  transition:border-color .3s var(--ease), background .3s var(--ease);
+}
+.nav.is-scrolled{
+  border-bottom-color:var(--line);
+  background:rgba(8,10,16,.95);
+}
+.nav__inner{
+  display:flex; align-items:center; justify-content:space-between;
+  height:64px;
+  max-width:var(--w-max);
+  margin:0 auto;
+  padding:0 var(--gutter);
+}
+.brand{
+  display:inline-flex; align-items:center; gap:12px;
+  font-family:var(--f-mono);
+  font-size:12px;
+  letter-spacing:.08em;
+  color:var(--bone);
+}
+.brand__logo{
+  width:30px; height:30px;
+  display:block;
+  /* logo is red-on-black PNG — let it sit against our dark bg naturally */
+  background:#000;
+  border:1px solid var(--line);
+  transition:transform .8s cubic-bezier(.2,.7,.2,1), border-color .3s var(--ease);
+}
+.brand:hover .brand__logo,
+.brand:focus-visible .brand__logo{
+  transform:rotate(360deg);
+  border-color:var(--red-mid);
+}
+.brand__name{font-weight:700; letter-spacing:.16em}
+.brand__sub{color:var(--bone-mute); display:none}
+@media (min-width:480px){.brand__sub{display:inline}}
+
+/* Brand hover swap — SPAGY → spagetak.com.
+   Vertikální cross-fade s kratším stagger— z módu „label“
+   (monýrový uppercase) přejde do „domain“ (editorial kurzíva).
+   Používá inline-grid aby kontejner už dopředu byl široký na obojetné. */
+.brand__swap{
+  display:inline-grid;
+  vertical-align:baseline;
+  overflow:hidden;
+  line-height:1.1;
+  padding:1px 0;
+}
+.brand__swap > span{
+  grid-area:1 / 1;
+  white-space:nowrap;
+  transition:transform .55s var(--ease), opacity .35s var(--ease), filter .35s var(--ease);
+  will-change:transform, opacity;
+}
+.brand__swap-from{
+  /* dědí font ze .brand (mono, 12px, letter-spacing:.08em),
+     aby výsledek vypadal stejně jako původní label */
+  font:inherit;
+  letter-spacing:inherit;
+  color:var(--bone);
+  transform:translateY(0);
+  opacity:1;
+}
+.brand__swap-to{
+  /* dědí font ze .brand (mono, 12px, letter-spacing:.08em),
+     vizuálně se odlišuje tučností, uppercase a rudou barvou */
+  font:inherit;
+  letter-spacing:inherit;
+  font-weight:700;
+  text-transform:uppercase;
+  color:var(--red-bright);
+  transform:translateY(120%);
+  opacity:0;
+  filter:blur(2px);
+}
+.brand:hover .brand__swap-from,
+.brand:focus-visible .brand__swap-from{
+  transform:translateY(-120%);
+  opacity:0;
+  filter:blur(2px);
+}
+.brand:hover .brand__swap-to,
+.brand:focus-visible .brand__swap-to{
+  transform:translateY(0);
+  opacity:1;
+  filter:blur(0);
+  transition-delay:.04s;
+}
+
+.nav__links{
+  display:flex; gap:28px;
+  font-family:var(--f-mono);
+  font-size:11px;
+  letter-spacing:.12em;
+  text-transform:uppercase;
+}
+.nav__links a{
+  color:var(--bone-dim);
+  position:relative;
+  padding:6px 0;
+  transition:color .2s var(--ease);
+}
+.nav__links a::before{
+  content:"";
+  position:absolute; left:-10px; top:50%;
+  width:4px; height:1px;
+  background:var(--red-bright);
+  transform:translateY(-50%) scaleX(0);
+  transform-origin:left;
+  transition:transform .25s var(--ease);
+}
+.nav__links a:hover,
+.nav__links a:focus-visible{color:var(--bone)}
+.nav__links a:hover::before,
+.nav__links a:focus-visible::before{transform:translateY(-50%) scaleX(1)}
+
+.nav__toggle{
+  display:none;
+  width:36px; height:36px;
+  align-items:center; justify-content:center;
+  border:1px solid var(--line-2);
+}
+.nav__toggle span,
+.nav__toggle span::before,
+.nav__toggle span::after{
+  display:block; width:14px; height:1px;
+  background:var(--bone);
+}
+.nav__toggle span{position:relative}
+.nav__toggle span::before,
+.nav__toggle span::after{content:""; position:absolute; left:0}
+.nav__toggle span::before{top:-5px}
+.nav__toggle span::after{top:5px}
+
+.nav__drawer{
+  display:none;
+  position:fixed;
+  top:64px; left:0; right:0;
+  background:var(--void);
+  border-bottom:1px solid var(--line);
+  padding:var(--s-5) var(--gutter) var(--s-6);
+  z-index:40;
+}
+.nav__drawer ul{
+  list-style:none; margin:0; padding:0;
+  display:flex; flex-direction:column; gap:var(--s-4);
+  font-family:var(--f-mono);
+  font-size:14px;
+  letter-spacing:.08em;
+  text-transform:uppercase;
+}
+.nav__drawer a{
+  display:flex; align-items:baseline; gap:14px;
+  color:var(--bone-dim);
+  padding:10px 0;
+  border-bottom:1px solid var(--line);
+}
+.nav__drawer a .n{color:var(--red-bright); font-size:11px}
+.nav.is-open .nav__drawer{display:block}
+
+/* =========================================================
+   Section scaffolding
+   ========================================================= */
+.section{
+  position:relative;
+  padding:var(--s-10) 0 var(--s-9);
+}
+.section + .section{border-top:1px solid var(--line)}
+.section__head{
+  display:flex; align-items:baseline; gap:var(--s-5);
+  margin-bottom:var(--s-7);
+}
+.section__head h2{
+  font-family:var(--f-serif);
+  font-weight:400;
+  font-size:clamp(28px, 3vw, 40px);
+  line-height:1;
+  letter-spacing:-.01em;
+  color:var(--bone);
+  margin:0;
+}
+.section__head h2 em{
+  font-style:italic;
+  color:var(--bone-dim);
+  font-weight:300;
+}
+.section__head .rule{
+  flex:1; height:1px;
+  background:linear-gradient(90deg, var(--line) 0%, transparent 100%);
+  align-self:center;
+}
+
+/* =========================================================
+   HERO
+   ========================================================= */
+.hero{
+  min-height:100svh;
+  padding:140px 0 220px;
+  display:flex; flex-direction:column; justify-content:center;
+  position:relative;
+  /* overflow:hidden vodorovně (300vw planeta), ale spodek
+     fadujeme maskou – povrch planety se rozplyne do hvězd,
+     žádný tvrdý řez na hranici hero ↔ O mně. Spodní 14 %
+     hera je v prázdné padding-bottom zóně, takže text
+     fade nezasáhne. */
+  overflow:hidden;
+  -webkit-mask-image:linear-gradient(to bottom, #000 0%, #000 86%, transparent 99%);
+          mask-image:linear-gradient(to bottom, #000 0%, #000 86%, transparent 99%);
+}
+
+/* Planetary horizon — large dark sphere + thin red atmospheric rim.
+   Sits at the base of the hero. The top of the curve is always ~220px
+   above the hero's bottom edge (regardless of viewport width), so on
+   wide desktop screens we don't end up "inside" the planet. */
+.horizon{
+  position:absolute;
+  left:50%;
+  bottom:calc(140px - 300vw);
+  width:300vw; height:300vw;
+  max-width:none;
+  border-radius:50%;
+  background:
+    radial-gradient(circle at 50% 0%, rgba(173,8,8,.12) 0%, rgba(173,8,8,.05) 5%, transparent 12%),
+    radial-gradient(circle at 50% 50%, #0a0c12 0%, #060709 70%);
+  transform:translateX(-50%);
+  z-index:2;
+  box-shadow:
+    /* outward halo — follows the planet's curve because the element
+       has border-radius:50%, so the shadow respects the silhouette */
+    0 0 120px 30px rgba(173,8,8,.22),
+    0 0 280px 80px rgba(173,8,8,.12),
+    /* crisp red rim */
+    inset 0 10px 0 -2px rgba(173,8,8,.22),
+    inset 0 3px 0 -1px rgba(173,8,8,.55),
+    /* tiny top hairline highlight */
+    0 -1px 0 0 rgba(173,8,8,.28);
+  pointer-events:none;
+}
+/* horizon-haze — no longer needed; halo now lives on the planet itself
+   via outward box-shadow so it follows the curve. Kept hidden so older
+   HTML keeps working. */
+.horizon-haze{ display:none; }
+
+/* =========================================================
+   Hero → About přechod
+   ---------------------------------------------------------
+   Vyřešeno mask-image na .hero (viz výše) – spodek hera mizí
+   do průhlednosti, takže povrch planety se plynule rozplyne
+   do hvězdného void v #about. Žádný hard edge.
+   ========================================================= */
+
+/* corner ticks */
+.hero__frame{
+  position:absolute;
+  pointer-events:none;
+  width:22px; height:22px;
+  color:var(--ash);
+  z-index:4;
+}
+.hero__frame.tl{top:96px; left:var(--gutter); border-top:1px solid; border-left:1px solid}
+.hero__frame.tr{top:96px; right:var(--gutter); border-top:1px solid; border-right:1px solid}
+.hero__frame.bl{bottom:48px; left:var(--gutter); border-bottom:1px solid; border-left:1px solid}
+.hero__frame.br{bottom:48px; right:var(--gutter); border-bottom:1px solid; border-right:1px solid}
+
+.hero__inner{position:relative; z-index:5}
+
+.hero__meta{
+  display:flex; flex-wrap:wrap; gap:18px 32px;
+  font-family:var(--f-mono);
+  font-size:11px;
+  letter-spacing:.16em;
+  text-transform:uppercase;
+  color:var(--bone-mute);
+  margin-bottom:var(--s-7);
+}
+.hero__meta .live{
+  display:inline-flex; align-items:center; gap:8px;
+  color:var(--bone-dim);
+}
+.hero__meta .live::before{
+  content:"";
+  width:6px; height:6px;
+  border-radius:50%;
+  background:var(--red-bright);
+  box-shadow:0 0 0 0 rgba(173,8,8,.55);
+  animation:pulse 2.6s var(--ease) infinite;
+}
+@keyframes pulse{
+  0%   {box-shadow:0 0 0 0 rgba(173,8,8,.55)}
+  70%  {box-shadow:0 0 0 8px rgba(173,8,8,0)}
+  100% {box-shadow:0 0 0 0 rgba(173,8,8,0)}
+}
+
+.hero__alias{
+  font-family:var(--f-mono);
+  font-size:12px;
+  letter-spacing:.36em;
+  color:var(--red-bright);
+  margin-bottom:var(--s-4);
+  display:inline-flex;
+  align-items:baseline;
+  flex-wrap:wrap;
+  gap:.5em;
+}
+.hero__alias .alias-dot{
+  color:var(--bone-mute);
+  letter-spacing:0;
+}
+.hero__alias .typewriter{
+  display:inline-flex;
+  align-items:baseline;
+  letter-spacing:.18em;
+  color:var(--red-bright);
+}
+.hero__alias .typewriter__text{
+  white-space:nowrap;
+  display:inline-block;
+  position:relative;
+  will-change:filter, transform;
+}
+.hero__alias .typewriter__text.is-blur{
+  animation:tw-blur 220ms var(--ease);
+}
+@keyframes tw-blur{
+  0%   { filter:blur(4px); transform:translateY(.06em); opacity:.6; }
+  60%  { filter:blur(1px); transform:translateY(0); opacity:1; }
+  100% { filter:blur(0);    transform:translateY(0); opacity:1; }
+}
+.tw-char{
+  display:inline-block;
+  opacity:0;
+  filter:blur(6px);
+  transform:translateY(.18em);
+}
+.tw-char.is-in{
+  animation:tw-char-in 280ms cubic-bezier(.2,.7,.2,1) forwards;
+}
+@keyframes tw-char-in{
+  0%   { opacity:0;  filter:blur(6px); transform:translateY(.18em); }
+  60%  { opacity:1;  filter:blur(1.2px); transform:translateY(0); }
+  100% { opacity:1;  filter:blur(0);     transform:translateY(0); }
+}
+.hero__alias .typewriter__caret{
+  display:inline-block;
+  width:.55em;
+  height:1em;
+  margin-left:.18em;
+  background:var(--red-bright);
+  transform:translateY(.12em);
+  box-shadow:0 0 8px rgba(173,8,8,.5);
+  animation:caret-blink 1.05s ease-in-out infinite;
+}
+@keyframes caret-blink{
+  0%, 45%   { opacity:1; }
+  55%, 100% { opacity:0; }
+}
+
+.hero__name{
+  font-family:var(--f-display);
+  font-weight:400;
+  font-size:clamp(72px, 14vw, 220px);
+  line-height:.9;
+  letter-spacing:-.015em;
+  color:var(--bone);
+  margin:0 0 var(--s-5);
+  text-wrap:balance;
+}
+.hero__name .italic{
+  font-style:italic;
+  color:var(--bone-dim);
+  font-weight:300;
+}
+
+.hero__tag{
+  max-width:48ch;
+  font-family:var(--f-sans);
+  font-size:clamp(16px,1.4vw,19px);
+  line-height:1.6;
+  color:var(--bone-dim);
+  margin:0 0 var(--s-7);
+  text-wrap:pretty;
+}
+.hero__tag em{
+  color:var(--bone);
+  font-style:normal;
+}
+
+.hero__cta{
+  display:flex; flex-wrap:wrap; gap:var(--s-4);
+  align-items:center;
+}
+
+.btn{
+  display:inline-flex; align-items:center; gap:12px;
+  padding:14px 22px;
+  font-family:var(--f-mono);
+  font-size:11px;
+  letter-spacing:.16em;
+  text-transform:uppercase;
+  border:1px solid var(--line-2);
+  color:var(--bone);
+  background:rgba(17,21,30,.7);
+  transition:border-color .2s var(--ease), color .2s var(--ease), background .2s var(--ease);
+}
+.btn:hover, .btn:focus-visible{
+  border-color:var(--red-mid);
+  color:var(--bone);
+  background:rgba(50,8,10,.45);
+}
+.btn--ghost{background:transparent; color:var(--bone-dim)}
+.btn--ghost:hover{color:var(--bone)}
+.btn .arrow{
+  width:20px;
+  height:8px;
+  flex:none;
+  display:block;
+  overflow:visible;
+  transition:width .25s var(--ease);
+}
+.btn:hover .arrow{width:28px}
+
+/* =========================================================
+   About
+   ========================================================= */
+.about__grid{
+  display:grid;
+  grid-template-columns:minmax(0, 1.2fr) minmax(280px, .8fr);
+  gap:var(--s-7);
+  align-items:start;
+}
+.about__body{
+  font-family:var(--f-sans);
+  font-weight:400;
+  font-size:clamp(17px, 1.35vw, 20px);
+  line-height:1.65;
+  color:var(--bone);
+  max-width:62ch;
+  text-wrap:pretty;
+}
+
+/* Right-hand identification card */
+.about__panel{
+  position:relative;
+  background:var(--panel);
+  border:1px solid var(--line);
+  padding:var(--s-5);
+  display:flex; flex-direction:column;
+  gap:var(--s-5);
+}
+.about__panel::before,
+.about__panel::after{
+  content:"";
+  position:absolute;
+  width:10px; height:10px;
+  border-color:var(--red-mid);
+  border-style:solid;
+  border-width:0;
+}
+.about__panel::before{top:-1px; left:-1px; border-top-width:1px; border-left-width:1px}
+.about__panel::after {bottom:-1px; right:-1px; border-bottom-width:1px; border-right-width:1px}
+
+.ap__head{
+  display:grid;
+  grid-template-columns:40px 1fr;
+  gap:var(--s-3);
+  align-items:center;
+  padding-bottom:var(--s-4);
+  border-bottom:1px solid var(--line);
+}
+.ap__logo{
+  width:40px; height:40px;
+  display:block;
+  background:#000;
+  border:1px solid var(--line-2);
+}
+.ap__id{
+  display:flex; flex-direction:column; gap:2px;
+  min-width:0;
+}
+.ap__name{
+  font-family:var(--f-sans);
+  font-weight:700;
+  font-size:13px;
+  letter-spacing:.18em;
+  color:var(--bone);
+  display:inline-block;
+  cursor:default;
+}
+.ap__name .apl{
+  display:inline-block;
+  will-change:transform;
+  transition:transform .55s cubic-bezier(.2,.7,.2,1);
+}
+/* Letters spread rightward — S stays, each next letter pushes further right.
+   No color or vertical shift, all on the same baseline. */
+.ap__name:hover .apl:nth-child(1),
+.ap__name:focus-within .apl:nth-child(1){
+  transform:translateX(0);
+}
+.ap__name:hover .apl:nth-child(2),
+.ap__name:focus-within .apl:nth-child(2){
+  transform:translateX(8px);
+  transition-delay:.02s;
+}
+.ap__name:hover .apl:nth-child(3),
+.ap__name:focus-within .apl:nth-child(3){
+  transform:translateX(16px);
+  transition-delay:.04s;
+}
+.ap__name:hover .apl:nth-child(4),
+.ap__name:focus-within .apl:nth-child(4){
+  transform:translateX(24px);
+  transition-delay:.06s;
+}
+.ap__name:hover .apl:nth-child(5),
+.ap__name:focus-within .apl:nth-child(5){
+  transform:translateX(32px);
+  transition-delay:.08s;
+}
+.ap__tag{
+  font-family:var(--f-sans);
+  font-size:10px;
+  letter-spacing:.18em;
+  text-transform:uppercase;
+  color:var(--bone-mute);
+}
+.ap__status{
+  display:inline-flex; align-items:center; gap:6px;
+  font-family:var(--f-sans);
+  font-size:10px;
+  letter-spacing:.18em;
+  text-transform:uppercase;
+  color:var(--bone-dim);
+}
+.ap__dot{
+  width:6px; height:6px; border-radius:50%;
+  background:var(--red-bright);
+  box-shadow:0 0 0 0 rgba(173,8,8,.55);
+  animation:pulse 2.6s var(--ease) infinite;
+}
+
+.ap__rows{
+  margin:0; padding:0;
+  display:flex; flex-direction:column;
+  border-top:0;
+}
+.ap__row{
+  display:grid;
+  grid-template-columns:1fr auto;
+  gap:var(--s-3);
+  padding:10px 0;
+  border-bottom:1px dashed var(--line);
+  align-items:baseline;
+}
+.ap__row:last-child{border-bottom:0}
+.ap__row dt{
+  font-family:var(--f-sans);
+  font-size:10px;
+  letter-spacing:.18em;
+  text-transform:uppercase;
+  color:var(--bone-mute);
+  margin:0;
+}
+.ap__row dd{
+  font-family:var(--f-sans);
+  font-size:13px;
+  color:var(--bone);
+  margin:0;
+  text-align:right;
+}
+
+.ap__now{
+  position:relative;
+  border-top:1px solid var(--line);
+  padding-top:var(--s-4);
+  display:flex; flex-direction:column; gap:8px;
+}
+.ap__now-meta{
+  display:flex; align-items:center; justify-content:space-between;
+  font-family:var(--f-sans);
+  font-size:10px;
+  letter-spacing:.18em;
+  text-transform:uppercase;
+}
+.ap__now-label{color:var(--red-bright)}
+.ap__now-sub{color:var(--bone-mute)}
+.ap__now-title{
+  font-family:"Bebas Neue", "Oswald", "Arial Narrow", sans-serif;
+  font-weight:400;
+  font-size:56px;
+  line-height:.95;
+  color:var(--red-bright);
+  margin:0;
+  letter-spacing:.06em;
+  text-transform:uppercase;
+}
+.ap__now-logo{
+  display:block;
+  width:auto;
+  height:46px;
+  margin:2px 0 4px;
+  /* flex parent by default stretchuje cross-axis (= width); to
+     deformuje obrázek. align-self ho zacvakne na vnitřní velikost. */
+  align-self:flex-start;
+  max-width:100%;
+  -webkit-user-drag:none;
+  user-select:none;
+  cursor:pointer;
+  transition:transform .15s var(--ease), filter .25s var(--ease);
+}
+.ap__now-logo:hover{
+  filter:drop-shadow(0 0 10px rgba(173,8,8,.35));
+}
+.ap__now-logo:active{
+  transform:scale(.94);
+}
+
+/* Row that holds the Rust logo + a hidden recommendation message */
+.ap__now-row{
+  display:flex;
+  align-items:center;
+  gap:var(--s-4);
+  position:relative;
+}
+.ap__rust-msg{
+  font-family:var(--f-serif);
+  font-style:italic;
+  font-size:14px;
+  line-height:1.25;
+  color:var(--bone-dim);
+  opacity:0;
+  transform:translateX(-6px);
+  pointer-events:none;
+  transition:opacity .45s var(--ease), transform .45s var(--ease);
+  max-width:0;
+  overflow:hidden;
+  white-space:nowrap;
+}
+.ap__rust-msg em{
+  display:block;
+  font-style:normal;
+  font-family:var(--f-mono);
+  font-size:9.5px;
+  letter-spacing:.18em;
+  text-transform:uppercase;
+  color:var(--red-bright);
+  margin-top:4px;
+}
+.ap__rust-msg.is-visible{
+  opacity:1;
+  transform:translateX(0);
+  max-width:200px;
+}
+.ap__bar{
+  position:relative;
+  height:1px;
+  background:var(--line-2);
+  margin-top:6px;
+  overflow:hidden;
+}
+.ap__bar-fill{
+  position:absolute;
+  left:-30%;
+  top:0; bottom:0;
+  width:30%;
+  background:linear-gradient(90deg, transparent 0%, var(--red-bright) 50%, transparent 100%);
+  animation:ap-scan 3.6s var(--ease) infinite;
+}
+@keyframes ap-scan{
+  0%   {left:-30%}
+  100% {left:100%}
+}
+
+/* Hidden secret button — clickable empty corner of the ID card */
+.ap__secret{
+  position:absolute;
+  top:14px; right:14px;
+  z-index:5;
+}
+.ap__secret-btn{
+  width:26px; height:26px;
+  border:0;
+  background:transparent;
+  cursor:pointer;
+  padding:0;
+  display:grid; place-items:center;
+  border-radius:50%;
+  transition:background .25s var(--ease);
+}
+.ap__secret-btn::after{
+  content:"";
+  width:6px; height:6px;
+  background:var(--ash);
+  opacity:.35;
+  border-radius:50%;
+  transition:opacity .25s var(--ease), background .25s var(--ease), transform .25s var(--ease), box-shadow .25s var(--ease);
+}
+.ap__secret-btn:hover::after,
+.ap__secret-btn:focus-visible::after{
+  opacity:1;
+  background:var(--red-bright);
+  transform:scale(1.4);
+  box-shadow:0 0 8px rgba(173,8,8,.6);
+}
+.ap__secret-msg{
+  position:absolute;
+  right:0;
+  top:32px;
+  background:rgba(8,10,16,.96);
+  border:1px solid var(--red-mid);
+  padding:7px 12px;
+  font-family:var(--f-mono);
+  font-size:10px;
+  letter-spacing:.14em;
+  text-transform:uppercase;
+  color:var(--red-bright);
+  white-space:nowrap;
+  opacity:0;
+  transform:translateY(-6px) scale(.96);
+  transform-origin:top right;
+  pointer-events:none;
+  transition:opacity .35s var(--ease), transform .35s var(--ease);
+  box-shadow:
+    0 8px 24px rgba(0,0,0,.4),
+    0 0 24px rgba(173,8,8,.25);
+}
+.ap__secret-msg::before{
+  content:"";
+  position:absolute;
+  right:11px; top:-5px;
+  width:8px; height:8px;
+  background:rgba(8,10,16,.96);
+  border-left:1px solid var(--red-mid);
+  border-top:1px solid var(--red-mid);
+  transform:rotate(45deg);
+}
+.ap__secret-msg.is-visible{
+  opacity:1;
+  transform:translateY(0) scale(1);
+}
+.about__body p{margin:0 0 var(--s-5)}
+.about__body p:last-child{margin-bottom:0}
+.about__body .dim{color:var(--bone-dim)}
+.about__body .mark{
+  color:var(--red-bright);
+  font-family:var(--f-mono);
+  font-size:.78em;
+  font-weight:600;
+  letter-spacing:.06em;
+  padding:0 4px;
+  /* posun nahoru, aby opticky sedě s baseline body textu */
+  position:relative;
+  top:-.08em;
+}
+.about__body .age{
+  font-family:var(--f-mono);
+  font-size:.72em;
+  font-weight:600;
+  letter-spacing:.1em;
+  color:var(--red-bright);
+  border:1px solid var(--red-mid);
+  padding:1px 6px 2px;
+  margin:0 2px;
+  position:relative;
+  top:-.16em;
+  font-variant-numeric:tabular-nums;
+}
+
+/* =========================================================
+   Projects
+   ========================================================= */
+.projects{
+  display:grid;
+  grid-template-columns:repeat(3, 1fr);
+  gap:var(--s-4);
+}
+.proj{
+  position:relative;
+  display:flex; flex-direction:column;
+  padding:var(--s-5) var(--s-5) var(--s-4);
+  background:var(--panel);
+  border:1px solid var(--line);
+  min-height:340px;
+  transition:border-color .25s var(--ease), background .25s var(--ease), transform .25s var(--ease);
+}
+.proj::before, .proj::after{
+  content:"";
+  position:absolute;
+  width:10px; height:10px;
+  border-color:var(--red-mid);
+  border-style:solid;
+  border-width:0;
+  opacity:0;
+  transition:opacity .25s var(--ease);
+}
+.proj::before{top:-1px; left:-1px; border-top-width:1px; border-left-width:1px}
+.proj::after {bottom:-1px; right:-1px; border-bottom-width:1px; border-right-width:1px}
+.proj:hover{
+  border-color:var(--red);
+  background:#161924;
+  transform:translateY(-2px);
+}
+.proj:hover::before, .proj:hover::after{opacity:1}
+
+.proj__meta{
+  display:flex; align-items:center; justify-content:space-between;
+  font-family:var(--f-mono);
+  font-size:10px;
+  letter-spacing:.16em;
+  text-transform:uppercase;
+  color:var(--bone-mute);
+  margin-bottom:var(--s-6);
+}
+.proj__meta .status{
+  display:inline-flex; align-items:center; gap:6px;
+  color:var(--bone-dim);
+}
+.proj__meta .status .dot{width:5px; height:5px; border-radius:50%; background:var(--bone-dim)}
+.proj__meta .status.live .dot{background:var(--red-bright)}
+.proj__meta .status.archived .dot{background:var(--ash)}
+
+.proj__title{
+  font-family:var(--f-serif);
+  font-weight:400;
+  font-size:32px;
+  line-height:1.05;
+  color:var(--bone);
+  margin:0 0 var(--s-3);
+  letter-spacing:-.01em;
+}
+.proj__subtitle{
+  font-family:var(--f-mono);
+  font-size:10px;
+  font-weight:500;
+  letter-spacing:.18em;
+  text-transform:uppercase;
+  color:var(--red-bright);
+  margin:-8px 0 var(--s-4);
+}
+.proj__desc{
+  font-size:14.5px;
+  line-height:1.6;
+  color:var(--bone-dim);
+  margin:0 0 var(--s-5);
+  flex:1;
+  text-wrap:pretty;
+}
+.proj__tags{display:flex; flex-wrap:wrap; gap:6px; margin-bottom:var(--s-4)}
+.tag{
+  font-family:var(--f-mono);
+  font-size:10px;
+  letter-spacing:.12em;
+  text-transform:uppercase;
+  color:var(--bone-dim);
+  padding:4px 8px;
+  border:1px solid var(--line-2);
+  background:var(--panel-2);
+}
+/* Project foot — only the link now */
+.proj__foot{
+  display:flex; justify-content:flex-end; align-items:center;
+  padding-top:var(--s-4);
+  border-top:1px solid var(--line);
+  font-family:var(--f-mono);
+  font-size:11px;
+  letter-spacing:.14em;
+  text-transform:uppercase;
+}
+.proj__foot a{
+  color:var(--bone-dim);
+  display:inline-flex; align-items:center; gap:8px;
+  transition:color .2s var(--ease);
+}
+.proj__foot a:hover{color:var(--red-bright)}
+.proj__foot a .arrow{
+  width:18px;
+  height:8px;
+  flex:none;
+  display:block;
+  overflow:visible;
+}
+
+/* =========================================================
+   Skills — astronomical catalog cards
+   ========================================================= */
+.catalog{
+  display:grid;
+  grid-template-columns:repeat(4, 1fr);
+  gap:var(--s-3);
+}
+.cat{
+  position:relative;
+  display:flex; flex-direction:column;
+  gap:var(--s-3);
+  padding:var(--s-5) var(--s-4) var(--s-4);
+  background:
+    radial-gradient(ellipse 80% 60% at 50% 0%, rgba(173,8,8,.08) 0%, transparent 70%),
+    linear-gradient(180deg, var(--panel) 0%, #0e1118 100%);
+  border:1px solid var(--line);
+  min-height:230px;
+  overflow:hidden;
+  transition:border-color .3s var(--ease), transform .3s var(--ease), background .3s var(--ease);
+}
+.cat::before, .cat::after{
+  content:"";
+  position:absolute;
+  width:9px; height:9px;
+  border-color:var(--red-mid);
+  border-style:solid;
+  border-width:0;
+}
+.cat::before{
+  top:-1px; left:-1px;
+  border-top-width:1px; border-left-width:1px;
+}
+.cat::after{
+  bottom:-1px; right:-1px;
+  border-bottom-width:1px; border-right-width:1px;
+}
+.cat:hover{
+  border-color:var(--red);
+  transform:translateY(-3px);
+}
+
+/* Card-as-link variant: web skills redirect to the GitHub Pages projects */
+a.cat{
+  text-decoration:none;
+  color:inherit;
+}
+a.cat.cat--link::before{
+  /* keep the top-left corner tick from the base .cat::before */
+}
+a.cat.cat--link .cat__name::after{
+  content:"\2197";  /* ↗ */
+  display:inline-block;
+  margin-left:.35em;
+  font-family:var(--f-mono);
+  font-size:.55em;
+  color:var(--red-bright);
+  vertical-align:.35em;
+  opacity:.55;
+  transition:opacity .3s var(--ease), transform .3s var(--ease);
+}
+a.cat.cat--link:hover .cat__name::after{
+  opacity:1;
+  transform:translate(2px,-2px);
+}
+
+/* Big central glyph — Font Awesome icon */
+.cat__glyph{
+  display:flex; align-items:center; justify-content:center;
+  height:72px;
+  color:var(--bone);
+  font-size:48px;
+  line-height:1;
+  margin:4px 0 6px;
+  user-select:none;
+  transition:color .3s var(--ease), transform .3s var(--ease);
+  filter:drop-shadow(0 0 18px rgba(173,8,8,.18));
+}
+.cat:hover .cat__glyph{
+  color:var(--red-bright);
+  transform:translateY(-2px);
+}
+
+/* Skill name */
+.cat__name{
+  font-family:var(--f-serif);
+  font-weight:400;
+  font-size:24px;
+  line-height:1.1;
+  color:var(--bone);
+  letter-spacing:-.01em;
+  margin:0;
+  text-align:center;
+}
+.cat__name-sub{
+  color:var(--bone-mute);
+  font-style:italic;
+  font-size:.65em;
+}
+
+/* Description */
+.cat__desc{
+  font-family:var(--f-sans);
+  font-size:12.5px;
+  line-height:1.5;
+  color:var(--bone-dim);
+  margin:0;
+  text-align:center;
+  text-wrap:pretty;
+  flex:1;
+}
+
+/* Footer: status only, centered */
+.cat__foot{
+  margin-top:auto;
+  display:flex; align-items:center; justify-content:center;
+  padding-top:12px;
+  border-top:1px dashed var(--line);
+  font-family:var(--f-mono);
+  font-size:10px;
+  letter-spacing:.16em;
+  text-transform:uppercase;
+}
+.cat__status{
+  position:relative;
+  color:var(--red-bright);
+  font-weight:600;
+  padding:0 16px;
+  display:inline-flex; align-items:center;
+  transition:letter-spacing .35s var(--ease);
+}
+.cat__status::before,
+.cat__status::after{
+  content:"";
+  position:absolute;
+  top:50%;
+  width:10px;
+  height:1px;
+  background:var(--red-mid);
+  transform:translateY(-50%);
+  transition:width .35s var(--ease), background .35s var(--ease), box-shadow .35s var(--ease);
+}
+.cat__status::before{ right:100%; }
+.cat__status::after { left:100%;  }
+.cat:hover .cat__status{ letter-spacing:.22em; }
+.cat:hover .cat__status::before,
+.cat:hover .cat__status::after{
+  width:24px;
+  background:var(--red-bright);
+  box-shadow:0 0 8px rgba(173,8,8,.55);
+}
+
+@media (max-width: 960px){
+  .catalog{grid-template-columns:repeat(2, 1fr)}
+}
+@media (max-width: 540px){
+  .catalog{grid-template-columns:1fr}
+}
+
+/* =========================================================
+   Skills — grid of small cards (legacy, no longer used)
+   ========================================================= */
+.tiles{
+  display:grid;
+  grid-template-columns:repeat(4, 1fr);
+  gap:var(--s-3);
+}
+.tile{
+  position:relative;
+  display:flex; flex-direction:column;
+  gap:var(--s-3);
+  min-height:170px;
+  padding:var(--s-4) var(--s-4) var(--s-4);
+  background:var(--panel);
+  border:1px solid var(--line);
+  overflow:hidden;
+  transition:border-color .25s var(--ease), background .25s var(--ease), transform .25s var(--ease);
+}
+.tile::before, .tile::after{
+  content:"";
+  position:absolute;
+  width:8px; height:8px;
+  border-color:var(--red-mid);
+  border-style:solid;
+  border-width:0;
+  opacity:0;
+  transition:opacity .25s var(--ease);
+}
+.tile::before{top:-1px; left:-1px; border-top-width:1px; border-left-width:1px}
+.tile::after {bottom:-1px; right:-1px; border-bottom-width:1px; border-right-width:1px}
+.tile:hover{
+  border-color:var(--red);
+  background:#161924;
+  transform:translateY(-2px);
+}
+.tile:hover::before, .tile:hover::after{opacity:1}
+
+/* Red accent line that slides in on hover, top-left vertical */
+.tile-accent{
+  position:absolute;
+  left:0; top:0; bottom:0;
+  width:2px;
+  background:var(--red-bright);
+  transform:scaleY(0);
+  transform-origin:top;
+  transition:transform .35s var(--ease);
+}
+.tile:hover .tile-accent{ transform:scaleY(1); }
+
+.tile__top{
+  display:flex;
+  align-items:baseline;
+  justify-content:space-between;
+  font-family:var(--f-mono);
+  font-size:10px;
+  letter-spacing:.16em;
+  text-transform:uppercase;
+}
+.tile__cat{
+  color:var(--red-bright);
+  text-transform:lowercase;
+  letter-spacing:.08em;
+  font-weight:500;
+}
+.tile__num{
+  color:var(--bone-mute);
+  font-variant-numeric:tabular-nums;
+}
+.tile__name{
+  font-family:var(--f-sans);
+  font-weight:700;
+  font-size:22px;
+  line-height:1.1;
+  color:var(--bone);
+  letter-spacing:-.01em;
+  margin:0;
+}
+.tile__name-sub{
+  color:var(--bone-mute);
+  font-size:.6em;
+  font-weight:500;
+  letter-spacing:.02em;
+}
+.tile__code{
+  margin-top:auto;
+  font-family:ui-monospace, "JetBrains Mono", "SF Mono", Menlo, Consolas, monospace;
+  font-size:11px;
+  letter-spacing:0;
+  color:var(--bone-dim);
+  background:rgba(8,10,16,.55);
+  border:1px solid var(--line);
+  padding:6px 10px;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  position:relative;
+}
+.tile__code::before{
+  content:"";
+  position:absolute;
+  left:-1px; top:50%;
+  width:2px; height:10px;
+  background:var(--red-mid);
+  transform:translateY(-50%);
+}
+.tile:hover .tile__code{
+  color:var(--bone);
+  border-color:var(--line-2);
+}
+.tile__foot{
+  display:flex; justify-content:flex-end; align-items:center;
+  font-family:var(--f-mono);
+  font-size:10px;
+  letter-spacing:.14em;
+  text-transform:uppercase;
+  color:var(--bone-mute);
+}
+.tile__lvl{
+  display:inline-flex; align-items:center; gap:8px;
+  color:var(--bone-dim);
+}
+.tile__lvl::before{
+  content:"";
+  width:5px; height:5px;
+  background:var(--red-bright);
+  border-radius:50%;
+  display:inline-block;
+}
+
+/* Animated level meter: hairline track + fill that grows on view */
+.tile__meter{
+  display:inline-flex; align-items:center;
+  width:60px;
+}
+.tile__meter .track{
+  position:relative;
+  width:100%; height:1px;
+  background:var(--line-2);
+}
+.tile__meter .fill{
+  position:absolute;
+  left:0; top:-1px; bottom:-1px;
+  width:0;
+  background:var(--red-bright);
+  transition:width 1.2s cubic-bezier(.2,.6,.2,1);
+}
+.tile__meter .fill::after{
+  content:"";
+  position:absolute;
+  right:-2px; top:50%;
+  transform:translateY(-50%) scale(0);
+  width:5px; height:5px; border-radius:50%;
+  background:var(--red-bright);
+  transition:transform .4s var(--ease) 1s;
+}
+.tile.is-in .tile__meter .fill{ width: var(--lvl, 50%); }
+.tile.is-in .tile__meter .fill::after{ transform:translateY(-50%) scale(1); }
+
+/* Hero corner frames removed; suppress in case any old CSS references them */
+.hero__frame{display:none !important}
+
+/* Age counter — tabular nums so width doesn't jump while ticking */
+.about__body .age{ font-variant-numeric: tabular-nums; }
+
+/* =========================================================
+   Contact
+   ========================================================= */
+.contact{
+  position:relative;
+  padding:var(--s-9) 0 var(--s-9);
+  border-top:1px solid var(--line);
+}
+.contact__lede{
+  font-family:var(--f-display);
+  font-weight:400;
+  font-size:clamp(44px, 7vw, 96px);
+  line-height:1;
+  color:var(--bone);
+  margin:0 0 var(--s-7);
+  letter-spacing:-.015em;
+  text-wrap:balance;
+}
+.contact__lede em{font-style:italic; color:var(--bone-dim); font-weight:300}
+
+.contact__rows{display:flex; flex-direction:column; border-top:1px solid var(--line)}
+.crow{
+  display:grid;
+  grid-template-columns:120px 1fr auto;
+  gap:var(--s-4);
+  align-items:center;
+  padding:18px 0;
+  border-bottom:1px solid var(--line);
+  font-family:var(--f-mono);
+  font-size:13px;
+  letter-spacing:.04em;
+  position:relative;
+  transform:translateX(0);
+  transition:transform .55s cubic-bezier(.22,.7,.2,1);
+}
+/* Red marker that appears to the left of the row on hover */
+.crow::before{
+  content:"";
+  position:absolute;
+  right:100%;
+  top:50%;
+  margin-right:10px;
+  width:0; height:1px;
+  background:var(--red-bright);
+  transform:translateY(-50%);
+  transition:width .55s cubic-bezier(.22,.7,.2,1);
+}
+.crow .k,
+.crow .ext{
+  transition:color .35s var(--ease);
+}
+.crow:hover{ transform:translateX(18px); }
+.crow:hover::before{ width:20px; }
+.crow:hover .k{ color:var(--bone-dim); }
+.crow:hover .ext{ color:var(--bone-dim); }
+.crow .k{
+  color:var(--bone-mute);
+  letter-spacing:.18em;
+  text-transform:uppercase;
+  font-size:10px;
+}
+.crow .v{color:var(--bone)}
+.crow .v a{
+  color:var(--bone);
+  border-bottom:1px solid transparent;
+  transition:color .2s var(--ease), border-color .2s var(--ease);
+  padding-bottom:1px;
+}
+.crow .v a:hover{
+  color:var(--red-bright);
+  border-bottom-color:var(--red);
+}
+.crow .ext{
+  color:var(--bone-mute);
+  font-size:10px;
+  letter-spacing:.14em;
+  text-transform:uppercase;
+}
+
+/* Copy-on-click — looks like the link variant, but does not navigate.
+   Underline lives on the label only, so the "zkopírováno" status next
+   to it stays clean on hover. */
+.crow .copy{
+  font:inherit;
+  background:none; border:0; padding:0;
+  cursor:pointer;
+  color:var(--bone);
+  display:inline-flex; align-items:baseline; gap:10px;
+}
+.crow .copy__label{
+  border-bottom:1px solid transparent;
+  padding-bottom:1px;
+  transition:color .2s var(--ease), border-color .2s var(--ease);
+}
+.crow .copy:hover .copy__label,
+.crow .copy:focus-visible .copy__label{
+  color:var(--red-bright);
+  border-bottom-color:var(--red);
+}
+.crow .copy__status{
+  font-size:10px;
+  letter-spacing:.16em;
+  text-transform:uppercase;
+  color:var(--red-bright);
+  opacity:0;
+  transform:translateY(2px);
+  transition:opacity .2s var(--ease), transform .2s var(--ease);
+  white-space:nowrap;
+}
+.crow .copy.is-copied .copy__status{
+  opacity:1;
+  transform:none;
+}
+.crow.is-copied{}
+
+/* =========================================================
+   Footer
+   ========================================================= */
+.foot{
+  padding:var(--s-6) 0 var(--s-7);
+  border-top:1px solid var(--line);
+  font-family:var(--f-mono);
+  font-size:10px;
+  letter-spacing:.16em;
+  text-transform:uppercase;
+  color:var(--bone-mute);
+}
+.foot__row{
+  display:flex; justify-content:space-between;
+  flex-wrap:wrap; gap:var(--s-3);
+}
+.foot a{color:var(--bone-dim)}
+.foot a:hover{color:var(--bone)}
+.foot__coord{display:inline-flex; gap:18px; flex-wrap:wrap}
+
+/* =========================================================
+   Reveal on scroll
+   ========================================================= */
+[data-reveal]{opacity:0; transform:translateY(14px); transition:opacity .8s var(--ease), transform .8s var(--ease)}
+[data-reveal].is-in{opacity:1; transform:none}
+
+/* =========================================================
+   Responsive
+   ========================================================= */
+@media (max-width: 960px){
+  .projects{grid-template-columns:1fr 1fr}
+  .tiles{grid-template-columns:repeat(2, 1fr)}
+  .about__grid{grid-template-columns:1fr; gap:var(--s-5)}
+}
+@media (max-width: 720px){
+  .nav__links{display:none}
+  .nav__toggle{display:inline-flex}
+  .hero{padding-top:120px; padding-bottom:160px}
+  .hero__frame{display:none}
+  .projects{grid-template-columns:1fr}
+  .tiles{grid-template-columns:repeat(2, 1fr)}
+  .crow{grid-template-columns:90px 1fr; gap:var(--s-3)}
+  .crow .ext{display:none}
+  .section{padding:var(--s-8) 0 var(--s-7)}
+  .horizon{bottom:calc(100px - 300vw)}
+}
+
+/* =========================================================
+   TWEAKS — paleta / hloubka / typografie
+   ---------------------------------------------------------
+   Používám body[data-*] snímače, aby JS jenom prohazoval atribut
+   a CSS rozhodne, co se vízuálně změní. Tweaky mění celý pocit
+   webu, ne jenom jednu proměnnou.
+   ========================================================= */
+
+/* --- PALETA --- přebarvuje akcenty (rim planety, hover, glow) -- */
+body[data-palette="Aurora"]{
+  --red:         #0c4a52;
+  --red-mid:     #14707c;
+  --red-bright:  #5fd3e3;
+  --red-deep:    #062228;
+}
+body[data-palette="Sunset"]{
+  --red:         #7a3a08;
+  --red-mid:     #b65510;
+  --red-bright:  #ff9046;
+  --red-deep:    #3a1903;
+}
+body[data-palette="Mono"]{
+  --red:         #3a3a3a;
+  --red-mid:     #5a5a5a;
+  --red-bright:  #c7c2b6;
+  --red-deep:    #1a1a1a;
+}
+/* horizont (planeta) má na některých místech zapeklitě hard-coded
+   rgba(173,8,8,.X) — proměnné do nich nesahnu.
+   Pro pal Sunset / Aurora / Mono překreslení planety s novými RGB. */
+body[data-palette="Aurora"] .horizon{
+  background:
+    radial-gradient(circle at 50% 0%, rgba(95,211,227,.14) 0%, rgba(95,211,227,.05) 5%, transparent 12%),
+    radial-gradient(circle at 50% 50%, #08121a 0%, #050a10 70%);
+  box-shadow:
+    0 0 120px 30px rgba(20,112,124,.22),
+    0 0 280px 80px rgba(20,112,124,.12),
+    inset 0 10px 0 -2px rgba(95,211,227,.22),
+    inset 0 3px 0 -1px rgba(95,211,227,.55),
+    0 -1px 0 0 rgba(95,211,227,.28);
+}
+body[data-palette="Sunset"] .horizon{
+  background:
+    radial-gradient(circle at 50% 0%, rgba(255,144,70,.16) 0%, rgba(255,144,70,.06) 5%, transparent 12%),
+    radial-gradient(circle at 50% 50%, #16100a 0%, #0a0604 70%);
+  box-shadow:
+    0 0 120px 30px rgba(182,85,16,.24),
+    0 0 280px 80px rgba(182,85,16,.12),
+    inset 0 10px 0 -2px rgba(255,144,70,.24),
+    inset 0 3px 0 -1px rgba(255,144,70,.58),
+    0 -1px 0 0 rgba(255,144,70,.30);
+}
+body[data-palette="Mono"] .horizon{
+  background:
+    radial-gradient(circle at 50% 0%, rgba(199,194,182,.10) 0%, rgba(199,194,182,.04) 5%, transparent 12%),
+    radial-gradient(circle at 50% 50%, #0a0c12 0%, #060709 70%);
+  box-shadow:
+    0 0 120px 30px rgba(90,90,90,.16),
+    0 0 280px 80px rgba(90,90,90,.08),
+    inset 0 10px 0 -2px rgba(199,194,182,.18),
+    inset 0 3px 0 -1px rgba(199,194,182,.45),
+    0 -1px 0 0 rgba(199,194,182,.22);
+}
+
+/* --- HLOUBKA --- jak intenzivně je vesmír cítit ----------------- */
+/* Minimální: planeta zmizí, hvězdy zřídí, mlhoviny utlumeny.
+   Web se změní v tišší editorial dark site. */
+body[data-depth="Minimální"] .horizon{ opacity:0; visibility:hidden; }
+body[data-depth="Minimální"] #stars{ opacity:.35; }
+body[data-depth="Minimální"] .sky{
+  background:
+    radial-gradient(ellipse 90% 60% at 78% 14%, rgba(173,8,8,.06) 0%, transparent 55%),
+    radial-gradient(ellipse 80% 60% at 8% 88%, rgba(20,30,70,.08) 0%, transparent 55%),
+    var(--void);
+}
+body[data-depth="Minimální"] .sky::before,
+body[data-depth="Minimální"] .sky::after{ opacity:.18; }
+body[data-depth="Minimální"] .vignette{ opacity:.4; }
+/* Bez planety nepotřebujeme žádný přechod ani mask na hero */
+body[data-depth="Minimální"] .hero{
+  -webkit-mask-image:none; mask-image:none;
+}
+
+/* Kino: obím planeta, hustá mlhovina, silný vignette, je to spektakl */
+body[data-depth="Kino"] .horizon{
+  bottom:calc(40px - 300vw);
+  filter:saturate(1.1);
+}
+body[data-depth="Kino"] .sky{
+  background:
+    radial-gradient(ellipse 100% 70% at 78% 14%, rgba(173,8,8,.32) 0%, transparent 60%),
+    radial-gradient(ellipse 90% 70% at 8% 88%, rgba(20,30,70,.40) 0%, transparent 60%),
+    radial-gradient(ellipse 140% 50% at 50% 30%, rgba(60,40,80,.18) 0%, transparent 65%),
+    var(--void);
+}
+body[data-depth="Kino"] .sky::before,
+body[data-depth="Kino"] .sky::after{ opacity:.85; }
+body[data-depth="Kino"] .vignette{
+  background:radial-gradient(ellipse at 50% 40%, transparent 0%, transparent 22%, rgba(8,10,16,.80) 95%);
+}
+
+/* --- TYPOGRAFIE --- pocit písma přes displejové nadpisy --------- */
+/* Brutální: těžký uppercase sans, žádná kurzíva, ostré hrany */
+body[data-typo="Brutální"] .hero__name,
+body[data-typo="Brutální"] .section__head h2,
+body[data-typo="Brutální"] .proj__title,
+body[data-typo="Brutální"] .contact__lede{
+  font-family:"Archivo", system-ui, sans-serif;
+  font-weight:700;
+  text-transform:uppercase;
+  letter-spacing:-.015em;
+  font-style:normal;
+}
+body[data-typo="Brutální"] .hero__name .italic,
+body[data-typo="Brutální"] .section__head h2 em,
+body[data-typo="Brutální"] .contact__lede em{
+  font-style:normal;
+  font-weight:300;
+  color:var(--bone-dim);
+}
+/* Mono: technický mód, všechny displejové nadpisy v monospace */
+body[data-typo="Mono"] .hero__name,
+body[data-typo="Mono"] .section__head h2,
+body[data-typo="Mono"] .proj__title,
+body[data-typo="Mono"] .contact__lede{
+  font-family:ui-monospace, "JetBrains Mono", "SF Mono", Menlo, Consolas, monospace;
+  font-weight:500;
+  letter-spacing:-.04em;
+  font-style:normal;
+}
+body[data-typo="Mono"] .hero__name{ font-size:clamp(56px, 11vw, 170px); }
+body[data-typo="Mono"] .hero__name .italic,
+body[data-typo="Mono"] .section__head h2 em,
+body[data-typo="Mono"] .contact__lede em{
+  font-style:normal;
+  opacity:.5;
+  font-weight:300;
+}
+
+/* respect reduced motion */
+@media (prefers-reduced-motion: reduce){
+  *{animation-duration:.001ms !important; transition-duration:.001ms !important}
+  html{scroll-behavior:auto}
+  #stars{display:none}
+}
+</style>
+</head>
+<body>
+
+<!-- Background layers -->
+<div class="sky" aria-hidden="true"></div>
+<canvas id="stars" aria-hidden="true"></canvas>
+<div class="vignette" aria-hidden="true"></div>
+
+<!-- =====================================================
+     Navigation
+     ===================================================== -->
+<header class="nav" id="nav">
+  <div class="nav__inner">
+    <a class="brand" href="#top" aria-label="Spagy, domů">
+      <img class="brand__logo" src="spagy.webp" alt="Logo Spagy" width="30" height="30" />
+      <span class="brand__swap" aria-hidden="true">
+        <span class="brand__swap-from">SPAGY</span>
+        <span class="brand__swap-to">spagetak.com</span>
+      </span>
+    </a>
+    <nav class="nav__links" aria-label="Hlavní">
+      <a href="#about">O mně</a>
+      <a href="#work">Práce</a>
+      <a href="#stack">Dovednosti</a>
+      <a href="#contact">Kontakt</a>
+    </nav>
+    <button class="nav__toggle" id="navToggle" aria-label="Otevřít menu" aria-controls="navDrawer" aria-expanded="false">
+      <span></span>
+    </button>
+  </div>
+
+  <div class="nav__drawer" id="navDrawer" hidden>
+    <ul>
+      <li><a href="#about"><span class="n">01</span> O mně</a></li>
+      <li><a href="#work"><span class="n">02</span> Práce</a></li>
+      <li><a href="#stack"><span class="n">03</span> Dovednosti</a></li>
+      <li><a href="#contact"><span class="n">04</span> Kontakt</a></li>
+    </ul>
+  </div>
+</header>
+
+<main id="top">
+
+<!-- =====================================================
+     HERO
+     ===================================================== -->
+<section class="hero" aria-labelledby="heroName">
+  <div class="horizon" aria-hidden="true"></div>
+  <div class="horizon-haze" aria-hidden="true"></div>
+
+  <div class="wrap">
+    <div class="hero__inner">
+      <div class="hero__meta" data-reveal>
+      </div>
+
+      <div class="hero__alias" data-reveal>
+        IT STUDENT
+        <span class="alias-dot" aria-hidden="true">·</span>
+        <span class="typewriter" aria-label="učím se">
+          <span class="typewriter__text" id="typeText"></span><span class="typewriter__caret" aria-hidden="true"></span>
+        </span>
+      </div>
+
+      <h1 class="hero__name" id="heroName" data-reveal>
+        Vít Machač<span class="italic"></span>
+      </h1>
+
+      <p class="hero__tag" data-reveal>
+        Programátor, 17 let. <em>Učím se</em> C#, Unity a weby, většinou
+        v noci, většinou sám. Rád experimentuji s novými věcmi a snažím
+        se neustále zlepšovat.
+      </p>
+
+      <div class="hero__cta" data-reveal>
+        <a class="btn" href="mailto:vit.machac@spagetak.com" aria-label="Napsat Vítovi Machačovi e-mail">
+          vit.machac@spagetak.com
+          <svg class="arrow" viewBox="0 0 24 8" preserveAspectRatio="xMaxYMid meet" aria-hidden="true"><path d="M0 4 H20 M16 0 L20 4 L16 8" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="square" stroke-linejoin="miter" vector-effect="non-scaling-stroke"/></svg>
+        </a>
+        <a class="btn btn--ghost" href="#work">
+          Zobrazit práci
+          <svg class="arrow" viewBox="0 0 24 8" preserveAspectRatio="xMaxYMid meet" aria-hidden="true"><path d="M0 4 H20 M16 0 L20 4 L16 8" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="square" stroke-linejoin="miter" vector-effect="non-scaling-stroke"/></svg>
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- =====================================================
+     ABOUT
+     ===================================================== -->
+<section class="section" id="about" aria-labelledby="aboutH">
+  <div class="wrap">
+    <div class="section__head">
+      <h2 id="aboutH">O mně</h2>
+      <span class="rule" aria-hidden="true"></span>
+    </div>
+
+    <div class="about__grid">
+      <div class="about__body">
+      <p>
+        Jsem Vít. Online si říkám <span class="mark">spagy</span>. Je mi
+        <span class="age" data-counter data-target="17">0</span> a studuju
+        <span class="mark">IT na střední škole</span>. Programuju z Česka,
+        převážně v noci.
+      </p>
+      <p class="dim">
+        Momentálně se zaměřuji hlavně na C#, Unity a Python, ale také mě
+        fascinují weby. Rád experimentuji s novými věcmi, objevuju herní
+        mechaniky, hraju si s 3D grafikou a zkouším, co všechno se dá postavit.
+        Poslední dobou mě hodně baví práce s AI agenty. Snažím se neustále
+        zlepšovat.
+      </p>
+      <p class="dim">
+        Mimo obrazovku rád hraju hry, nejvíc <span class="mark">Rust</span>.
+        Všechno, co potřebuju vyřešit doma, vyřeším tam.
+      </p>
+      </div>
+
+      <aside class="about__panel" aria-label="Identifikační karta">
+        <div class="ap__secret" id="apSecret">
+          <button type="button" class="ap__secret-btn" aria-label="Tajemství" title="…"></button>
+          <span class="ap__secret-msg" aria-live="polite"></span>
+        </div>
+        <header class="ap__head">
+          <img class="ap__logo" src="spagy.webp" alt="" width="40" height="40" />
+          <div class="ap__id">
+            <span class="ap__name" aria-label="SPAGY">
+              <span class="apl">S</span><span class="apl">P</span><span class="apl">A</span><span class="apl">G</span><span class="apl">Y</span>
+            </span>
+            <span class="ap__tag">identifikační karta</span>
+          </div>
+        </header>
+
+        <dl class="ap__rows">
+          <div class="ap__row"><dt>Lokace</dt><dd>Liberec, CZ</dd></div>
+          <div class="ap__row"><dt>Čas. pásmo</dt><dd>Europe / Prague</dd></div>
+          <div class="ap__row"><dt>Aktivní</dt><dd>většinou v noci</dd></div>
+          <div class="ap__row"><dt>Stav</dt><dd>učím se</dd></div>
+        </dl>
+
+        <section class="ap__now" aria-label="Nyní hraje">
+          <div class="ap__now-meta">
+            <span class="ap__now-label">Nyní hraje</span>
+            <span class="ap__now-sub">facepunch official · noc</span>
+          </div>
+          <div class="ap__now-row">
+            <img class="ap__now-logo" id="rustLogo" src="rust-logo.webp" alt="RUST" tabindex="0" role="button" aria-label="RUST" />
+            <span class="ap__rust-msg" id="rustMsg" aria-live="polite">je to super hra<br><em>doporučuju</em></span>
+          </div>
+        </section>
+      </aside>
+    </div>
+  </div>
+</section>
+
+<!-- =====================================================
+     PRÁCE
+     ===================================================== -->
+<section class="section" id="work" aria-labelledby="workH">
+  <div class="wrap">
+    <div class="section__head">
+      <h2 id="workH">Moje práce</h2>
+      <span class="rule" aria-hidden="true"></span>
+    </div>
+
+    <div class="projects">
+
+      <article class="proj" tabindex="0">
+        <div class="proj__meta">
+          <span>2026 · Herní mod</span>
+          <span class="status live"><span class="dot"></span>Živé</span>
+        </div>
+        <h3 class="proj__title">My Winter Car</h3>
+        <p class="proj__subtitle">Subwoofer mod</p>
+        <p class="proj__desc">
+          Přepracovává zvukový systém ve hře. Přidává funkční subwoofery
+          do bytu i auta Rivett, membrány pulzují do basů a reagují na
+          knoflíky hlasitosti a basů.
+        </p>
+        <div class="proj__tags">
+          <span class="tag">C#</span>
+          <span class="tag">Unity</span>
+          <span class="tag">Mod</span>
+          <span class="tag">Audio</span>
+        </div>
+        <div class="proj__foot">
+          <a href="https://www.nexusmods.com/mywintercar/mods/2184" target="_blank" rel="noopener" aria-label="My Winter Car mod na NexusMods">
+            NexusMods <svg class="arrow" viewBox="0 0 24 8" preserveAspectRatio="xMaxYMid meet" aria-hidden="true"><path d="M0 4 H20 M16 0 L20 4 L16 8" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="square" stroke-linejoin="miter" vector-effect="non-scaling-stroke"/></svg>
+          </a>
+        </div>
+      </article>
+
+      <article class="proj" tabindex="0">
+        <div class="proj__meta">
+          <span>2026 · Desktop overlay</span>
+          <span class="status live"><span class="dot"></span>Živé</span>
+        </div>
+        <h3 class="proj__title">Mouse Scroll Counter</h3>
+        <p class="proj__subtitle">Python overlay</p>
+        <p class="proj__desc">
+          Průhledný overlay v Pythonu, který počítá akce kolečka myši
+          přes hry i běžné aplikace. Zelené číslo nahoru, červené dolů.
+          Měřítko 100 až 500 %, výběr monitoru, system tray.
+        </p>
+        <div class="proj__tags">
+          <span class="tag">Python</span>
+          <span class="tag">Overlay</span>
+          <span class="tag">Windows</span>
+          <span class="tag">Tray</span>
+        </div>
+        <div class="proj__foot">
+          <a href="https://github.com/Spagy69/Mouse-Scroll-Counter" target="_blank" rel="noopener" aria-label="Mouse Scroll Counter na GitHubu">
+            GitHub <svg class="arrow" viewBox="0 0 24 8" preserveAspectRatio="xMaxYMid meet" aria-hidden="true"><path d="M0 4 H20 M16 0 L20 4 L16 8" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="square" stroke-linejoin="miter" vector-effect="non-scaling-stroke"/></svg>
+          </a>
+        </div>
+      </article>
+
+      <article class="proj" tabindex="0">
+        <div class="proj__meta">
+          <span>2025 · Osobní web</span>
+          <span class="status live"><span class="dot"></span>Živé</span>
+        </div>
+        <h3 class="proj__title">spagetak.com</h3>
+        <p class="proj__subtitle">Vizitka a hřiště</p>
+        <p class="proj__desc">
+          Web, na kterém právě jsi. Vanilla HTML, CSS a JavaScript, žádné
+          frameworky. Hvězdné pole na canvasu a planetární horizont.
+        </p>
+        <div class="proj__tags">
+          <span class="tag">HTML</span>
+          <span class="tag">CSS</span>
+          <span class="tag">Vanilla JS</span>
+          <span class="tag">Canvas</span>
+        </div>
+        <div class="proj__foot">
+          <a href="https://spagetak.com" target="_blank" rel="noopener" aria-label="spagetak.com">
+            Otevřít <svg class="arrow" viewBox="0 0 24 8" preserveAspectRatio="xMaxYMid meet" aria-hidden="true"><path d="M0 4 H20 M16 0 L20 4 L16 8" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="square" stroke-linejoin="miter" vector-effect="non-scaling-stroke"/></svg>
+          </a>
+        </div>
+      </article>
+
+    </div>
+  </div>
+</section>
+
+<!-- =====================================================
+     DOVEDNOSTI / STACK
+     ===================================================== -->
+<section class="section" id="stack" aria-labelledby="stackH">
+  <div class="wrap">
+    <div class="section__head">
+      <h2 id="stackH">Dovednosti</h2>
+      <span class="rule" aria-hidden="true"></span>
+    </div>
+
+        <div class="catalog">
+        <article class="cat">
+          <div class="cat__glyph" aria-hidden="true"><i class="fa-brands fa-unity"></i></div>
+          <h3 class="cat__name">C#<span class="cat__name-sub"> / Unity</span></h3>
+          <p class="cat__desc">Hlavní jazyk, kterým rozhýbávám herní mechaniky v Unity.</p>
+          <footer class="cat__foot">
+            <span class="cat__status">používám</span>
+          </footer>
+        </article>
+
+        <article class="cat">
+          <div class="cat__glyph" aria-hidden="true"><i class="fa-solid fa-cube"></i></div>
+          <h3 class="cat__name">3D grafika</h3>
+          <p class="cat__desc">Modeluju a osvětluju scény, učím se materiály a shadery.</p>
+          <footer class="cat__foot">
+            <span class="cat__status">učím se</span>
+          </footer>
+        </article>
+
+        <a class="cat cat--link" href="https://spagy69.github.io/Websites/" target="_blank" rel="noopener">
+          <div class="cat__glyph" aria-hidden="true"><i class="fa-brands fa-html5"></i></div>
+          <h3 class="cat__name">HTML5</h3>
+          <p class="cat__desc">Sémantika a struktura. Základ každé stránky.</p>
+          <footer class="cat__foot">
+            <span class="cat__status">používám</span>
+          </footer>
+        </a>
+
+        <a class="cat cat--link" href="https://spagy69.github.io/Websites/" target="_blank" rel="noopener">
+          <div class="cat__glyph" aria-hidden="true"><i class="fa-brands fa-css3-alt"></i></div>
+          <h3 class="cat__name">CSS3<span class="cat__name-sub"> / Grid</span></h3>
+          <p class="cat__desc">Layout, pohyb, detaily. Moje oblíbená vrstva webu.</p>
+          <footer class="cat__foot">
+            <span class="cat__status">používám</span>
+          </footer>
+        </a>
+
+        <a class="cat cat--link" href="https://spagy69.github.io/Websites/" target="_blank" rel="noopener">
+          <div class="cat__glyph" aria-hidden="true"><i class="fa-brands fa-js"></i></div>
+          <h3 class="cat__name">JavaScript</h3>
+          <p class="cat__desc">Hýbu DOMem, píšu malé skripty a postupně se zlepšuju.</p>
+          <footer class="cat__foot">
+            <span class="cat__status">používám</span>
+          </footer>
+        </a>
+
+        <article class="cat">
+          <div class="cat__glyph" aria-hidden="true"><i class="fa-solid fa-microchip"></i></div>
+          <h3 class="cat__name">Mikrokontrolery<span class="cat__name-sub"> / ESP32, Arduino</span></h3>
+          <p class="cat__desc">Hraju si s hardwarem. Senzory, LEDky, malé projekty pro doma.</p>
+          <footer class="cat__foot">
+            <span class="cat__status">učím se</span>
+          </footer>
+        </article>
+
+        <article class="cat">
+          <div class="cat__glyph" aria-hidden="true"><i class="fa-brands fa-python"></i></div>
+          <h3 class="cat__name">Python</h3>
+          <p class="cat__desc">Skripty, automatizace, něco malého na desktop overlay.</p>
+          <footer class="cat__foot">
+            <span class="cat__status">používám</span>
+          </footer>
+        </article>
+
+        <article class="cat">
+          <div class="cat__glyph" aria-hidden="true"><i class="fa-brands fa-linux"></i></div>
+          <h3 class="cat__name">Linux<span class="cat__name-sub"> / shell</span></h3>
+          <p class="cat__desc">Terminál a základy systému, postupně se v něm orientuju.</p>
+          <footer class="cat__foot">
+            <span class="cat__status">učím se</span>
+          </footer>
+        </article>
+
+        <article class="cat">
+          <div class="cat__glyph" aria-hidden="true"><i class="fa-solid fa-network-wired"></i></div>
+          <h3 class="cat__name">Sítě</h3>
+          <p class="cat__desc">TCP/IP, podsítě, jak to celé drží pohromadě.</p>
+          <footer class="cat__foot">
+            <span class="cat__status">učím se</span>
+          </footer>
+        </article>
+
+        <article class="cat">
+          <div class="cat__glyph" aria-hidden="true"><i class="fa-brands fa-git-alt"></i></div>
+          <h3 class="cat__name">Git<span class="cat__name-sub"> / GitHub</span></h3>
+          <p class="cat__desc">Verzování všeho, co dělám. Včetně tohohle webu.</p>
+          <footer class="cat__foot">
+            <span class="cat__status">používám</span>
+          </footer>
+        </article>
+
+        <article class="cat">
+          <div class="cat__glyph" aria-hidden="true"><i class="fa-solid fa-robot"></i></div>
+          <h3 class="cat__name">AI agenti</h3>
+          <p class="cat__desc">Pomáhají mi stavět rychleji. Učím se s nimi spolupracovat.</p>
+          <footer class="cat__foot">
+            <span class="cat__status">používám</span>
+          </footer>
+        </article>
+
+        <article class="cat">
+          <div class="cat__glyph" aria-hidden="true"><i class="fa-solid fa-code"></i></div>
+          <h3 class="cat__name">VS Code</h3>
+          <p class="cat__desc">Domovský editor. Tady všechno vzniká.</p>
+          <footer class="cat__foot">
+            <span class="cat__status">používám</span>
+          </footer>
+        </article>
+      </div>
+  </div>
+</section>
+
+<!-- =====================================================
+     KONTAKT
+     ===================================================== -->
+<section class="contact" id="contact" aria-labelledby="contactH">
+  <div class="wrap">
+    <div class="section__head">
+      <h2 id="contactH">Kontakt</h2>
+      <span class="rule" aria-hidden="true"></span>
+    </div>
+
+    <div>
+      <h2 class="contact__lede">Něco postavit?
+Napiš mi</h2>
+
+        <div class="contact__rows" role="list">
+          <div class="crow" role="listitem">
+            <span class="k">E-mail</span>
+            <span class="v"><a href="mailto:vit.machac@spagetak.com">vit.machac@spagetak.com</a></span>
+            <span class="ext">primární</span>
+          </div>
+          <div class="crow" role="listitem">
+            <span class="k">GitHub</span>
+            <span class="v"><a href="https://github.com/Spagy69" target="_blank" rel="noopener" aria-label="GitHub profil, otevře se v novém okně">github.com/Spagy69</a></span>
+            <span class="ext">↗ externí</span>
+          </div>
+          <div class="crow" role="listitem">
+            <span class="k">Discord</span>
+            <span class="v"><button type="button" class="copy" data-copy="officialspagy" aria-label="Zkopírovat Discord uživatelské jméno"><span class="copy__label">officialspagy</span><span class="copy__status" aria-hidden="true"></span></button></span>
+            <span class="ext">kopie</span>
+          </div>
+          <div class="crow" role="listitem">
+            <span class="k">Doména</span>
+            <span class="v"><a href="https://spagetak.com">spagetak.com</a></span>
+            <span class="ext">domov</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<!-- =====================================================
+     FOOTER
+     ===================================================== -->
+<footer class="foot">
+  <div class="wrap">
+    <div class="foot__row">
+      <span style="font-family: Helvetica">© 2026 Vít Machač · Spagy</span>
+      <span class="foot__coord">
+        <span>spagetak.com</span>
+        <span id="clock">--:--:--</span>
+      </span>
+    </div>
+  </div>
+</footer>
+
+<!-- =====================================================
+     SCRIPTS
+     ===================================================== -->
+<script>
+(() => {
+  'use strict';
+
+  /* ----------------------------------------------------
+     Mobile nav
+     ---------------------------------------------------- */
+  const nav    = document.getElementById('nav');
+  const toggle = document.getElementById('navToggle');
+  const drawer = document.getElementById('navDrawer');
+
+  toggle.addEventListener('click', () => {
+    const open = nav.classList.toggle('is-open');
+    toggle.setAttribute('aria-expanded', String(open));
+    toggle.setAttribute('aria-label', open ? 'Zavřít menu' : 'Otevřít menu');
+    if (open) drawer.removeAttribute('hidden');
+    else      drawer.setAttribute('hidden', '');
+  });
+  drawer.querySelectorAll('a').forEach(a => {
+    a.addEventListener('click', () => {
+      nav.classList.remove('is-open');
+      toggle.setAttribute('aria-expanded', 'false');
+      drawer.setAttribute('hidden', '');
+    });
+  });
+
+  /* ----------------------------------------------------
+     Nav background on scroll
+     ---------------------------------------------------- */
+  const onScroll = () => nav.classList.toggle('is-scrolled', window.scrollY > 24);
+  window.addEventListener('scroll', onScroll, { passive: true });
+  onScroll();
+
+  /* ----------------------------------------------------
+     Reveal on scroll — auto-tag project / tile / row stagger
+     ---------------------------------------------------- */
+  document.querySelectorAll('.proj, .tile, .crow, .contact__lede, .section__head, .about__body > p').forEach(el => {
+    el.setAttribute('data-reveal', '');
+  });
+  const reveals = document.querySelectorAll('[data-reveal]');
+  if ('IntersectionObserver' in window) {
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach((e, i) => {
+        if (e.isIntersecting) {
+          setTimeout(() => e.target.classList.add('is-in'), i * 80);
+          io.unobserve(e.target);
+        }
+      });
+    }, { threshold: 0.12, rootMargin: '0px 0px -8% 0px' });
+    reveals.forEach(el => io.observe(el));
+  } else {
+    reveals.forEach(el => el.classList.add('is-in'));
+  }
+
+  /* ----------------------------------------------------
+     Tile meters — add .is-in when each tile enters view
+     ---------------------------------------------------- */
+  if ('IntersectionObserver' in window) {
+    const tio = new IntersectionObserver((entries) => {
+      entries.forEach((e, i) => {
+        if (e.isIntersecting) {
+          setTimeout(() => e.target.classList.add('is-in'), i * 90);
+          tio.unobserve(e.target);
+        }
+      });
+    }, { threshold: 0.3 });
+    document.querySelectorAll('.tile').forEach(el => tio.observe(el));
+  } else {
+    document.querySelectorAll('.tile').forEach(el => el.classList.add('is-in'));
+  }
+
+  /* ----------------------------------------------------
+     Count-up: any [data-counter] animates 0 → data-target on view
+     ---------------------------------------------------- */
+  function countUp(el){
+    const target   = parseFloat(el.dataset.target) || 0;
+    const from     = parseFloat(el.dataset.from)   || 0;
+    const duration = parseFloat(el.dataset.duration) || 1600;
+    const start    = performance.now();
+    const ease     = t => 1 - Math.pow(1 - t, 3);
+    function step(now){
+      const t = Math.min(1, (now - start) / duration);
+      el.textContent = Math.round(from + (target - from) * ease(t));
+      if (t < 1) requestAnimationFrame(step);
+    }
+    requestAnimationFrame(step);
+  }
+  if ('IntersectionObserver' in window) {
+    const cio = new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        if (e.isIntersecting) { countUp(e.target); cio.unobserve(e.target); }
+      });
+    }, { threshold: 0.6 });
+    document.querySelectorAll('[data-counter]').forEach(el => cio.observe(el));
+  } else {
+    document.querySelectorAll('[data-counter]').forEach(el => el.textContent = el.dataset.target);
+  }
+
+  /* ----------------------------------------------------
+     Copy-on-click — used by the Discord row
+     ---------------------------------------------------- */
+  document.querySelectorAll('[data-copy]').forEach(btn => {
+    const status = btn.querySelector('.copy__status');
+    btn.addEventListener('click', async () => {
+      const text = btn.dataset.copy;
+      let ok = false;
+      try {
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          await navigator.clipboard.writeText(text);
+          ok = true;
+        } else {
+          // fallback: invisible textarea + execCommand
+          const ta = document.createElement('textarea');
+          ta.value = text;
+          ta.style.position='fixed'; ta.style.opacity='0';
+          document.body.appendChild(ta);
+          ta.select();
+          ok = document.execCommand('copy');
+          document.body.removeChild(ta);
+        }
+      } catch (_) { ok = false; }
+      if (status) status.textContent = ok ? 'Zkopírováno' : 'Chyba';
+      btn.classList.add('is-copied');
+      clearTimeout(btn._copyT);
+      btn._copyT = setTimeout(() => btn.classList.remove('is-copied'), 1600);
+    });
+  });
+  const clock = document.getElementById('clock');
+  const fmt = new Intl.DateTimeFormat('cs-CZ', {
+    timeZone:'Europe/Prague',
+    hour:'2-digit', minute:'2-digit', second:'2-digit',
+    hour12:false
+  });
+  const tick = () => {
+    clock.textContent = fmt.format(new Date()) + ' Liberec';
+  };
+  tick();
+  setInterval(tick, 1000);
+
+  /* ----------------------------------------------------
+     Rust logo secret — click 5× to reveal a recommendation
+     ---------------------------------------------------- */
+  (() => {
+    const logo = document.getElementById('rustLogo');
+    const msg  = document.getElementById('rustMsg');
+    if (!logo || !msg) return;
+    const TARGET = 5;
+    let count = 0;
+    let resetT = null;
+    let hideT = null;
+    function show(){
+      msg.classList.add('is-visible');
+      clearTimeout(hideT);
+      hideT = setTimeout(() => msg.classList.remove('is-visible'), 5000);
+    }
+    function bump(){
+      count++;
+      // small wiggle feedback on each click before target
+      logo.animate(
+        [{ transform:'scale(1)' }, { transform:'scale(0.92) rotate(-2deg)' }, { transform:'scale(1)' }],
+        { duration: 260, easing: 'cubic-bezier(.2,.7,.2,1)' }
+      );
+      clearTimeout(resetT);
+      resetT = setTimeout(() => { count = 0; }, 2500); // reset combo if too slow
+      if (count >= TARGET){
+        count = 0;
+        show();
+      }
+    }
+    logo.addEventListener('click', bump);
+    logo.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' || e.key === ' '){
+        e.preventDefault();
+        bump();
+      }
+    });
+  })();
+
+  /* ----------------------------------------------------
+     Secret button on the ID card — pops a fun message
+     ---------------------------------------------------- */
+  (() => {
+    const root = document.getElementById('apSecret');
+    if (!root) return;
+    const btn = root.querySelector('.ap__secret-btn');
+    const msg = root.querySelector('.ap__secret-msg');
+    if (!btn || !msg) return;
+    const messages = [
+      '404 · humor not found',
+      'pšt, tady nic není',
+      'detekován tajný klik',
+      'psáno v noci · v 02:14',
+      'nahrávám humor… ░▒▓',
+      'spagy says hi',
+      'tajemství: špagety',
+      'kontrola hvězd · v pořádku',
+      'halt · bezpečnostní zámek',
+      'kdyby tu byl easter egg, byl by červený',
+      'orbit stabilní · jdi dál',
+      'achievement unlocked · zvědavec',
+    ];
+    let idx = 0;
+    let hideT = null;
+    btn.addEventListener('click', () => {
+      msg.textContent = messages[idx];
+      idx = (idx + 1) % messages.length;
+      msg.classList.add('is-visible');
+      clearTimeout(hideT);
+      hideT = setTimeout(() => msg.classList.remove('is-visible'), 2600);
+    });
+  })();
+
+  /* ----------------------------------------------------
+     Typewriter — cycles through skills in the hero alias
+     Each character fades in with a brief motion blur for smoothness.
+     ---------------------------------------------------- */
+  (() => {
+    const el = document.getElementById('typeText');
+    if (!el) return;
+    const phrases = [
+      'učím se C# a Unity',
+      'učím se Python',
+      'učím se JavaScript',
+      'učím se Linux',
+      'učím se sítě',
+      'učím se s AI agenty',
+      'učím se CSS a HTML',
+      'učím se 3D grafiku'
+    ];
+    const TYPE_MS = 95;
+    const ERASE_MS = 38;
+    const HOLD_MS = 2600;
+    const GAP_MS = 550;
+    let i = 0, j = 0, erasing = false;
+
+    function setText(str){
+      // rebuild content; animate just the latest character with blur
+      el.textContent = '';
+      if (!str) return;
+      const head = document.createTextNode(str.slice(0, -1));
+      el.appendChild(head);
+      const tail = document.createElement('span');
+      tail.className = 'tw-char';
+      tail.textContent = str.slice(-1);
+      el.appendChild(tail);
+      // force reflow then animate
+      void tail.offsetWidth;
+      tail.classList.add('is-in');
+    }
+
+    function tick(){
+      const word = phrases[i];
+      if (!erasing){
+        j++;
+        setText(word.slice(0, j));
+        if (j >= word.length){
+          erasing = true;
+          setTimeout(tick, HOLD_MS);
+          return;
+        }
+        setTimeout(tick, TYPE_MS + Math.random()*50);
+      } else {
+        j--;
+        setText(word.slice(0, j));
+        if (j <= 0){
+          erasing = false;
+          i = (i + 1) % phrases.length;
+          setTimeout(tick, GAP_MS);
+          return;
+        }
+        setTimeout(tick, ERASE_MS);
+      }
+    }
+    tick();
+  })();
+
+  /* ----------------------------------------------------
+     Star field — drifting parallax particles
+     ---------------------------------------------------- */
+  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (reduce) return;
+
+  const canvas = document.getElementById('stars');
+  const ctx    = canvas.getContext('2d');
+  let DPR = Math.min(window.devicePixelRatio || 1, 2);
+  let W = 0, H = 0;
+  let stars = [];
+
+  function resize() {
+    DPR = Math.min(window.devicePixelRatio || 1, 2);
+    W = window.innerWidth;
+    H = window.innerHeight;
+    canvas.style.width  = W + 'px';
+    canvas.style.height = H + 'px';
+    canvas.width  = W * DPR;
+    canvas.height = H * DPR;
+    ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+    build();
+  }
+
+  function build() {
+    const target = Math.min(140, Math.round((W * H) / 11000));
+    stars = new Array(target).fill(0).map(() => {
+      const layer = Math.random() < 0.65 ? 0 : 1;
+      return {
+        x: Math.random() * W,
+        y: Math.random() * H,
+        r: layer ? 1.2 + Math.random() * 1.0 : 0.5 + Math.random() * 0.6,
+        vx: (Math.random() - 0.5) * (layer ? 6 : 3),
+        vy: (Math.random() - 0.5) * (layer ? 4 : 2),
+        p: Math.random() * Math.PI * 2,
+        s: 0.3 + Math.random() * 1.2,
+        layer
+      };
+    });
+  }
+
+  let last = performance.now();
+  let scrollY = window.scrollY;
+  window.addEventListener('scroll', () => { scrollY = window.scrollY; }, { passive: true });
+
+  function frame(now) {
+    const dt = Math.min(0.05, (now - last) / 1000);
+    last = now;
+
+    ctx.clearRect(0, 0, W, H);
+    const py = scrollY * 0.05;
+
+    for (const s of stars) {
+      s.x += s.vx * dt;
+      s.y += s.vy * dt;
+      if (s.x < -4) s.x = W + 4; if (s.x > W + 4) s.x = -4;
+      if (s.y < -4) s.y = H + 4; if (s.y > H + 4) s.y = -4;
+
+      s.p += dt * s.s;
+      const tw = 0.55 + 0.45 * Math.sin(s.p);
+      const a  = (s.layer ? 0.9 : 0.55) * tw;
+
+      let col;
+      if (s.layer === 1 && Math.random() < 0.002) {
+        col = `rgba(173,8,8,${a.toFixed(3)})`; // rare red glint
+      } else if (s.layer === 1) {
+        col = `rgba(232,229,221,${a.toFixed(3)})`;
+      } else {
+        col = `rgba(180,178,170,${a.toFixed(3)})`;
+      }
+      ctx.fillStyle = col;
+      ctx.beginPath();
+      ctx.arc(s.x, s.y - py * (s.layer ? 1 : 0.4), s.r, 0, Math.PI * 2);
+      ctx.fill();
+    }
+
+    requestAnimationFrame(frame);
+  }
+
+  resize();
+  window.addEventListener('resize', resize);
+  requestAnimationFrame((t) => { last = t; frame(t); });
+})();
+</script>
+
+<!-- =====================================================
+     TWEAKS PANEL — paleta / hloubka / typografie
+     ===================================================== -->
+<div id="tweaks-root"></div>
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<script type="text/babel" src="tweaks-panel.jsx"></script>
+<script type="text/babel" src="tweaks.jsx"></script>
+
+</body>
+</html>
