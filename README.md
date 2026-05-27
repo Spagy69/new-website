@@ -36,7 +36,7 @@ Vedle hlavního obsahu obsahuje web několik **drobných easter eggů**: tajný 
 ## 3. Adresářová struktura
 
 ```
-main/
+new-website/
 ├── index.html             # celý web - HTML + inline CSS + inline JS
 ├── spagy.webp             # logo (přezdívka)
 ├── favicon.webp           # favicon prohlížeče
@@ -68,6 +68,15 @@ Pro každou ze 6 oblastí optimalizace je uveden (a) teoretický popis řešení
 - **Explicitní rozměry obrázků** - obrázky mají explicitně definovanou šířku (`width`) a výšku (`height`), čímž se předchází nechtěným posunům obsahu (Cumulative Layout Shift - CLS).
 - **Respekt k `prefers-reduced-motion`** - animace hvězdného pole (canvas) se při zapnutém systémovém omezení pohybu vůbec nespustí, což šetří CPU a baterii na slabších zařízeních.
 - **Optimalizované formáty** - všechny lokální obrázky na webu jsou ve vysoce komprimovaném formátu WebP.
+
+**Reálné naměřené metriky (Lighthouse):**
+
+| Metrika | Naměřená hodnota | Lighthouse skóre |
+|---|---|---|
+| **First Contentful Paint (FCP)** | 0.8 s | 96 % |
+| **Speed Index (SI)** | 0.8 s | 99 % |
+| **Largest Contentful Paint (LCP)** | 1.4 s | 84 % |
+| **Zabezpečení (HTTPS)** | Použito | 100 % |
 
 **Kód:**
 
